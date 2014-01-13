@@ -271,6 +271,43 @@ public class LeetCode {
 	        return resultList;
 	    }
 	    
+	    public static ArrayList<Integer> spiralOrder(int[][] matrix) {
+	        if(matrix==null ){
+	            return null;
+	        }
+	        if(matrix.length==0){
+	        	return new ArrayList<Integer>();
+	        }
+	        int startX = 0;
+	        int endX = matrix[0].length-1;
+	        int startY = 0;
+	        int endY = matrix.length-1;
+	        
+	        ArrayList<Integer> list = new ArrayList<Integer>();
+	        
+	        while(startX<=endX && startY<=endY){
+	            for(int i =startX; i<=endX; i++){
+	                list.add(matrix[startY][i]);
+	            }
+	            startY++;
+	            for(int i=startY; i<=endY; i++){
+	                list.add(matrix[i][endX]);
+	            }
+	            endX--;
+	            for(int i=endX; i>=startX; i--){
+	                list.add(matrix[endY][i]);
+	            }
+	            endY--;
+	            for(int i=endY; i>=startY; i--){
+	                list.add(matrix[i][startX]);
+	            }
+	            startX++;
+	        }
+	        
+	        return list;
+	        
+	    }
+	    
 	public static void main(String[] args){
 //		int[] A = {};
 //		int[] B = {2,3};
@@ -284,7 +321,10 @@ public class LeetCode {
 //		ListNode head = new ListNode(1);
 //		head.next = new ListNode(1);
 //		deleteDuplicates(head);
-		System.out.println(getRow(2));
+//		System.out.println(getRow(2));
+		int[][] array = new int[0][0];
+//		array[0][0] = 1;
+		System.out.println(spiralOrder(array));
 	}
 	
 	
