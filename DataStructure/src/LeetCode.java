@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -308,6 +309,326 @@ public class LeetCode {
 	        
 	    }
 	    
+	    public static void setZeroes(int[][] matrix) {
+	        if(matrix==null){
+	            return;
+	        }
+	        if(matrix.length==0){
+	            return;
+	        }
+	        
+	        int m = matrix.length;
+	        int n = matrix[0].length;
+	        
+	        boolean[] row = new boolean[m];
+	        boolean[] column = new boolean[n];
+	        
+	        for(int i=0; i<m; i++){
+	            for(int j =0;j < n; j++){
+	                if(matrix[m][n]==0){
+	                    row[m] = true;
+	                    column[n] = true;
+	                }
+	            }
+	        }
+	        
+	        for(int i=0; i<m; i++){
+	            if(row[i]){
+	                for(int j =0; j<n; j++){
+	                    matrix[i][j]=0;
+	                }
+	            }
+	        }
+	        
+	        for(int i=0; i<n; i++){
+	            if(column[n]){
+	                for(int j=0; j<m; j++){
+	                    matrix[j][i]=0;
+	                }
+	            }
+	        }
+	        
+	    }
+	    
+	    public static int[][] generateMatrix(int n) {
+	        if(n<0){
+	            return null;
+	        }
+	        
+	        int[][] result = new int[n][n];
+	        int start = 0;
+	        int end = n-1;
+	        int num =1;
+	        while(start<end){
+	            for(int i =start; i<=end; i++){
+	                result[start][i]=num++;
+	            }
+	            for(int i =start+1; i<=end; i++){
+	                result[i][end]=num++;
+	            }
+	            for(int i=end-1; i>=start; i--){
+	                result[end][i]=num++;
+	            }
+	            for(int i=end-1; i>start; i--){
+	                result[i][start]=num++;
+	            }
+	            start++;
+	            end--;
+	        }
+	        if(start==end){
+	        result[start][end]=num;
+	        }
+	        
+	        return result;
+	        
+	        
+	    }
+	    
+	    public static int[] searchRange(int[] A, int target) {
+	        int lowerBound = findLowerBound(A, target);
+	        int upperBound = findUpperBound(A, target);
+	        if(lowerBound == A.length || A[lowerBound]!=target){
+	            return new int[]{-1, -1};
+	        }
+	        return new int[]{lowerBound, upperBound};
+	        
+	    }
+	    
+	    static int findLowerBound(int[] A, int target){
+	        int first = 0;
+	        int last = A.length-1;
+	        while(first!=last){
+	            int mid = (first+last)/2;
+	            if(target>A[mid]){
+	                first = mid+1;
+	            }else{
+	                last = mid;
+	            }
+	        }
+	        return first;
+	        
+	    }
+	    
+	    static int findUpperBound(int[] A, int target){
+	        int first = 0;
+	        int last = A.length-1;
+	        while(first!=last){
+	            int mid = (first+last)/2;
+	            if(target>=A[mid]){
+	                first = mid+1;
+	            }else{
+	                last = mid;
+	            }
+	        }
+	        return first;
+	    }
+	    
+	    static public int maxProfit(int[] prices) {
+	        if(prices==null || prices.length<2){
+	            return 0;
+	        }
+	        int length = prices.length;
+	        int f[] = new int[length];
+	        f[0] = 0;
+	        int g[] = new int[length];
+	        g[length-1] = 0;
+	        int min, max;
+	        min = prices[0];
+	        max = prices[length-1];
+	        for(int i=1; i<length; i++){
+	            min = Math.min(min, prices[i]);
+	            f[i] = Math.max(f[i-1], prices[i]-min);
+	        }
+	        
+	        for(int i=length-2; i>=0; i--){
+	            max = Math.max(max, prices[i]);
+	            g[i] = Math.max(g[i+1], max - prices[i]);
+	        }
+	        
+	        int result = 0;
+	        for(int i=0; i<length; i++){
+	            result = Math.max(result, f[i]+g[i]);
+	        }
+	        
+	        return result;
+	        
+	    }
+	    
+	    public static TreeNode buildTree(int[] preorder, int[] inorder) {
+	        if(preorder==null || inorder==null || preorder.length!=inorder.length){
+	            return null;
+	        }
+	        
+	        return buildTree(preorder, 0, preorder.length-1, inorder, 0, inorder.length-1);
+	        
+	    }
+	    
+	    private static TreeNode buildTree(int[] preorder, int pStart, int pEnd, int[] inorder, int iStart, int iEnd){
+	    	if((pStart-pEnd) != (iStart-iEnd)){
+	            return null;
+	        }
+	        if(pStart>pEnd){
+		        	return null;
+		    }
+	        int value = preorder[pStart];
+	        TreeNode root = new TreeNode(value);
+	        if(pStart == pEnd){
+	            return root;
+	        }
+	        int foundIndex = -1;
+	        for(int i=iStart; i<=iEnd; i++){
+	            if(inorder[i]==value){
+	                foundIndex = i;
+	                break;
+	            }
+	        }
+	        if(foundIndex==-1){
+	            return null;
+	        }
+	        root.left = buildTree(preorder, pStart+1, pStart+foundIndex-iStart, inorder, iStart, foundIndex-1);
+	        root.right = buildTree(preorder, pStart+foundIndex-iStart+1, pEnd, inorder, foundIndex+1, iEnd);
+	        
+	        return root;
+	    }
+	   
+	    public TreeNode sortedArrayToBST(int[] num) {
+	        if(num==null){
+	            return null;
+	        }
+	        return sortedArrayToBST(num, 0, num.length-1);
+	    }
+	    
+	    private TreeNode sortedArrayToBST(int[] num, int start, int end){
+	        if(start<end)
+	            return null;
+	        int mid = (start + end)/2;
+	        TreeNode node = new TreeNode(num[mid]);
+	        node.left = sortedArrayToBST(num, start, mid-1);
+	        node.right = sortedArrayToBST(num, mid+1, end);
+	        
+	        return node;
+	    }
+	    
+	    public static ListNode deleteDuplicates2(ListNode head) {
+	        if(head == null)
+	            return null;
+	        ListNode root = new ListNode(-1);
+	        ListNode prev = root;
+	        ListNode curr,next;
+	        curr = head;
+	        while(curr!=null){
+	            next = curr.next;
+	            boolean found = false;
+	            while(next!=null && next.val==curr.val){
+	                found = true;
+	                next = next.next;
+	            }
+	            if(found){
+	                curr = next;
+	            }else{
+	            	prev.next = curr;
+	                prev = curr;
+	                prev.next = null;
+	                curr = next;
+	            }
+	        }
+	        
+	        return root.next;
+	        
+	    }
+	    
+	    public double pow(double x, int n) {
+	        if(n<0)
+	            return 1.0/power(x, -n);
+	        return power(x,n);
+	        
+	    }
+	    
+	    private double power(double x, int n){
+	        if(n==0)
+	            return 1.0;
+	        double temp = power(x, n/2);
+	        if(n%2==0){
+	            return temp * temp;
+	        }else{
+	            return temp * temp * x;
+	        }
+	    }
+	    
+	    public int sqrt(int x) {
+	        if(x<2){
+	            return x;
+	        }
+	        int left = 1;
+	        int right = x/2;
+	        int mid=1;
+	        int lastMid=1;
+	        while(left<=right){
+	            mid = (left + right)/2;
+	            if((x/mid)>mid){
+	                lastMid = mid;
+	                left = mid +1;
+	            }else if((x/mid)<mid){
+	                right = mid - 1;
+	            }else{
+	                return mid;
+	            }
+	        }
+	        return lastMid;
+	        
+	    }
+	    
+	    public static void rotate(int[][] matrix) {
+	        if(matrix==null || matrix.length==0 ){
+	            return;
+	        }
+	        int n = matrix.length;
+	        int temp;
+	        for(int left=0, right=n-1; left<right; left++, right--){
+	            for(int i=0; i<n; i++){
+	                temp = matrix[i][left];
+	                matrix[i][left] = matrix[i][right];
+	                matrix[i][right] = temp;
+	            }
+	        }
+	        
+	        for(int i=0; i<n-1; i++){
+	            for(int j=0; j<n-1-i; j++){
+	                temp = matrix[i][j];
+	                matrix[i][j] = matrix[n-1-j][n-1-i];
+	                matrix[n-1-j][n-1-i] = temp;
+	            }
+	            
+	        }
+	        
+	        return;
+	        
+	    }
+	    
+	    public static int[] plusOne(int[] digits) {
+	        if(digits==null || digits.length==0){
+	            return digits;
+	        }
+	        int carry = 1;
+	        int temp;
+	        for(int i=digits.length-1; i>=0; i--){
+	            temp = digits[i]+carry;
+	            digits[i] = temp %10;
+	            carry = temp/10;
+	        }
+	        if(carry==0){
+	            return digits;
+	        }else{
+	            int[] newDigits = new int[digits.length+1];
+	            newDigits[0]=1;
+	            for(int i=0; i<digits.length; i++){
+	                newDigits[i+1] = digits[i];
+	            }
+	            return newDigits;
+	        }
+	        
+	    }
+	    
 	public static void main(String[] args){
 //		int[] A = {};
 //		int[] B = {2,3};
@@ -322,9 +643,79 @@ public class LeetCode {
 //		head.next = new ListNode(1);
 //		deleteDuplicates(head);
 //		System.out.println(getRow(2));
-		int[][] array = new int[0][0];
-//		array[0][0] = 1;
-		System.out.println(spiralOrder(array));
+//		int[][] array = new int[1][1];
+//		array[0][0] = 0;
+////		setZeroes(array);
+//		array = generateMatrix(3);
+//		System.out.println(array[0][1]);
+//		
+//		ListNode n = new ListNode(1);
+//		//1->2->3 ===> 321
+//		int value = 1;
+//		int i = 1;
+//		while(n!=null){
+//			value += n.val*i;
+//			i*=10;
+//			n = n.next;
+//		}
+//		
+//		//1->2->3 ===> 123
+//		value = 1;
+//		while (n != null) {
+//			value = value *10 + n.val;
+//			n = n.next;
+//		}
+//		
+//		int num = 12345;
+//		ListNode head = new ListNode(num%10);
+//		num = num/10;
+//		ListNode node = head;
+//		while(num>0){
+//			node.next = new ListNode(num%10);
+//			node = node.next;
+//			num = num/10;
+//		}
+//		//5->4->3->2->1
+//		while(head!=null){
+//			System.out.println(head.val+"->");
+//			head = head.next;
+//		}
+//		
+//		num = 12345;
+//		int index = 1;
+//		int temp = num;
+//		while(temp>10){
+//			temp = temp/10;
+//			index *= 10;
+//		}
+//		head = new ListNode(num/index);
+//		num = num % index;
+//		index /=10;
+//		node = head;
+//		while(num>0){
+//			node.next = new ListNode(num/index);
+//			node = node.next;
+//			num = num % index;
+//			index /= 10;
+//		}
+//		//1->2->3->4->5
+//		while(head!=null){
+//			System.out.print(head.val+"->");
+//			head = head.next;
+//		}
+//		System.out.println(searchRange(new int[]{1,3},1));
+//		maxProfit(new int[]{1,2});
+//		buildTree(new int[]{1,2},new int[]{2,1});
+//		System.out.println(deleteDuplicates2(new ListNode(1)));
+//		int[][] matrix = new int[][]{{1,2,3},{4,5,6},{7,8,9}};
+//		rotate(matrix);
+//		for(int i=0; i<3; i++){
+//			System.out.println(Arrays.toString(matrix[i]));
+//		}
+		
+		int[] digits = {1};
+		System.out.println(Arrays.toString(plusOne(digits)));
+		
 	}
 	
 	
@@ -337,3 +728,10 @@ class ListNode {
         next = null;
     }
 }
+
+class TreeNode {
+	      int val;
+	      TreeNode left;
+	      TreeNode right;
+	      TreeNode(int x) { val = x; }
+	  }
