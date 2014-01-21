@@ -629,6 +629,282 @@ public class LeetCode {
 	        
 	    }
 	    
+	    public static int search(int[] A, int target) {
+	        if(A==null || A.length==0){
+	            return -1;
+	        }
+	        int lowerBound = 0;
+	        int upperBound = A.length;
+	        int mid;
+	        while(lowerBound!=upperBound){
+	            mid = (lowerBound + upperBound)/2;
+	            if(target == A[mid]){
+	                return mid;
+	            }else if(A[lowerBound]<=A[mid]){
+	                if(target<A[mid] && target>=A[lowerBound]){
+	                    upperBound = mid;
+	                }else{
+	                    lowerBound = mid+1;
+	                }
+	            }else{
+	                if(target>A[mid] && target<=A[upperBound-1]){
+	                    lowerBound = mid+1;
+	                }else{
+	                    upperBound = mid;
+	                }
+	            }
+	        }
+	        
+	        return -1;
+	    }
+	    
+	    public static int trap(int[] A) {
+	        if(A==null || A.length == 0){
+	            return 0;
+	        }
+	        int[] maxLeft = new int[A.length];
+	        //maxLeft[0] = A[0];
+	        int[] maxRight = new int[A.length];
+	        
+	        for(int i=1; i<A.length; i++){
+	            maxLeft[i] = Math.max(maxLeft[i-1], A[i-1]);
+	            maxRight[A.length-1-i] = Math.max(maxRight[A.length-i],A[A.length-i]);
+	        }
+	        int sum = 0;
+	        for(int i=1; i<A.length; i++){
+	            int height = Math.min(maxLeft[i], maxRight[i]);
+	            if(height > A[i]){
+	                sum += height - A[i];
+	            }
+	        }
+	        
+	        return sum;
+	        
+	    }
+	    
+	    public static int candy(int[] ratings) {
+	        if(ratings==null || ratings.length==0){
+	            return 0;
+	        }
+	        int[] candys = new int[ratings.length];
+	        candys[0]=1;
+	        for(int i=1; i<ratings.length; i++){
+	            if(ratings[i]>ratings[i-1]){
+	                candys[i] = candys[i-1]+1;
+	            }else{
+	                candys[i] = 1;
+	            }
+	        }
+	        for(int i=ratings.length-2; i>=0; i--){
+	            if(ratings[i]>ratings[i+1]){
+	                if(candys[i]<=candys[i+1]){
+	                    candys[i] = Math.max(candys[i+1]+1, candys[i]+1);
+	                }
+	            }
+	        }
+	        int sum =0;
+	        for(int i=0; i<candys.length; i++){
+	            sum += candys[i];
+	        }
+	        
+	        return sum;
+	        
+	    }
+	    
+	    public int canCompleteCircuit(int[] gas, int[] cost) {
+	        int total = 0;
+	        int sum = 0;
+	        int index = -1;
+	        for(int i=0; i<gas.length; i++){
+	            total += gas[i] - cost[i];
+	            sum += gas[i] - cost[i];
+	            if(sum<0){
+	                index = i;
+	                sum = 0;
+	            }
+	        }
+	        
+	        return total>0? index + 1:-1;
+	        
+	    }
+	    
+	    public static ListNode partition(ListNode head, int x) {
+	    	if(head==null || head.next==null){
+	            return head;
+	        }
+	        ListNode left = new ListNode(-1);
+	        ListNode right = new ListNode(-1);
+	        ListNode leftCurr = left;
+	        ListNode rightCurr = right;
+	        
+	        ListNode curr = head;
+	        while(curr!=null){
+	            if(curr.val<x){
+	                leftCurr.next = curr;
+	                leftCurr = leftCurr.next;
+	                curr = curr.next;
+	            }else{
+	                rightCurr.next = curr;
+	                rightCurr = rightCurr.next;
+	                curr = curr.next;
+	            }
+	        }
+	        
+	        leftCurr.next = right.next;
+	        rightCurr.next = null;
+	        return left.next;
+	    }
+	    
+	    public static ListNode reverseKGroup(ListNode head, int k) {
+	        if(head==null || head.next==null || k<2){
+	            return head;
+	        }
+	        ListNode nextStart = head;
+	        for(int i=0; i<k; i++){
+	            if(nextStart!=null){
+	                nextStart = nextStart.next;
+	            }else{
+	                return head;
+	            }
+	        }
+	        ListNode nextHead = reverseKGroup(nextStart, k);
+	        ListNode prev = null;
+	        ListNode curr = head;
+	        while(k>0){
+	            ListNode next = curr.next;
+	            if(prev==null){
+	                curr.next = nextHead;
+	            }else{
+	                curr.next = prev;
+	            }
+	            prev = curr;
+	            curr = next;
+	            k--;
+	        }
+	        
+	        return prev;
+	    }
+	    
+	    public RandomListNode copyRandomList(RandomListNode head) {
+	        if(head==null){
+	            return head;
+	        }
+	        RandomListNode curr = head;
+	        while(curr!=null){
+	            RandomListNode temp = new RandomListNode(curr.label);
+	            temp.next = curr.next;
+	            curr.next = temp;
+	            curr = temp.next;
+	        }
+	        curr = head;
+	        while(curr!=null){
+	            if(curr.random!=null){
+	                curr.next.random = curr.random.next;
+	            }
+	            curr = curr.next.next;
+	        }
+	        curr = head;
+	        RandomListNode newHead = new RandomListNode(-1);
+	        RandomListNode newCurr = newHead;
+	        while(curr!=null){
+	            newCurr.next = curr.next;
+	            curr.next = curr.next.next;
+	            newCurr = newCurr.next;
+	            curr = curr.next;
+	        }
+	        
+	        return newHead.next;
+	    }
+	    
+	    public static void reorderList(ListNode head) {
+	        if(head==null || head.next==null){
+	            return;
+	        }
+	        ListNode prev = null;
+	        ListNode slow = head;
+	        ListNode fast = head;
+	        while(fast!=null && fast.next!=null){
+	            prev = slow;
+	            slow = slow.next;
+	            fast = fast.next.next;
+	        }
+	        
+	        prev.next = null;
+	        ListNode newHead = reverseList(slow);
+	        ListNode leftP = head;
+	        ListNode rightP = newHead;
+	        while(leftP.next!=null){
+	            ListNode next = leftP.next;
+	            leftP.next = rightP;
+	            rightP = rightP.next;
+	            leftP.next.next = next;
+	            leftP = next;
+	        }
+	        leftP.next = rightP;
+	        
+	        return;
+	    }
+	    
+	    private static ListNode reverseList(ListNode head){
+	        ListNode prev = null;
+	        ListNode curr = head;
+	        while(curr!=null){
+	            ListNode next = curr.next;
+	            curr.next = prev;
+	            prev = curr;
+	            curr = next;
+	        }
+	        return prev;
+	    }
+	    
+	    
+	    public static ListNode reverseBetween(ListNode head, int m, int n) {
+	        if(head==null || head.next==null){
+	            return head;
+	        }
+	        ListNode dumpHead = new ListNode(-1);
+	        dumpHead.next = head;
+	        ListNode prev = dumpHead;
+	        ListNode curr = head;
+	        int count = m-1;
+	        while(count>0){
+	            prev = curr;
+	            curr = curr.next;
+	            count--;
+	        }
+	        prev.next = reverseList(curr, n-m+1);
+	        return dumpHead.next;
+	        
+	    }
+	    
+	    private static ListNode reverseList(ListNode head, int length){
+	        if(head==null || head.next==null){
+	            return head;
+	        }
+	        ListNode prev = null;
+	        ListNode curr = head;
+	        ListNode nextP = curr;
+	        int k = length;
+	        while(k>0){
+	            nextP = nextP.next;
+	            k--;
+	        }
+	        while(length>0){
+	        	ListNode next = curr.next;
+	            if(prev == null){
+	                curr.next = nextP;
+	            }else{
+	                curr.next = prev;
+	            }
+
+                prev = curr;
+                curr = next;
+	            length--;
+	        }
+	        
+	        return prev;
+	    }
+	    
 	public static void main(String[] args){
 //		int[] A = {};
 //		int[] B = {2,3};
@@ -713,8 +989,17 @@ public class LeetCode {
 //			System.out.println(Arrays.toString(matrix[i]));
 //		}
 		
-		int[] digits = {1};
-		System.out.println(Arrays.toString(plusOne(digits)));
+		int[] digits = {1,2,3,9,6,4,5,10,7};
+//		System.out.println(Arrays.toString(plusOne(digits)));
+//		System.out.println(search(digits,2));
+//		System.out.println(candy(digits));
+		ListNode head = new ListNode(3);
+		head.next = new ListNode(5);
+//		head.next.next = new ListNode(3);
+//		partition(head, 2);
+//		reverseKGroup(head,2);
+//		reorderList(head);
+		reverseBetween(head, 1,1);
 		
 	}
 	
@@ -735,3 +1020,9 @@ class TreeNode {
 	      TreeNode right;
 	      TreeNode(int x) { val = x; }
 	  }
+
+class RandomListNode {
+	      int label;
+	      RandomListNode next, random;
+	      RandomListNode(int x) { this.label = x; }
+	  };
